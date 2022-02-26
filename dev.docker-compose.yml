@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    ports:
+      - '3000:80'
+    volumes:
+      - ./server:/web/server
+    # On linux, run `id -u` and `id -g`
+    # to find these numbers
+    # Consider an override as per
+    # https://blog.giovannidemizio.eu/2021/05/24/how-to-set-user-and-group-in-docker-compose/
+    user: 1000:1000
+  mongo:
+    # container_name: mongo
+    image: mongo
+    volumes:
+      - ./docker_volumes/mongo:/data/db
+    ports:
+      - '27018:27017'

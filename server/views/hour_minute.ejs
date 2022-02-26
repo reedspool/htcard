@@ -1,0 +1,3 @@
+<time datetime=<%= date.toISOString() %> data-format="hour_minute">
+    <%= `${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` %>
+</time>

@@ -1,0 +1,4 @@
+{
+    "ext": "*.js,*.ts,*.ejs,*.json",
+    "ignore": ["server/www/", "rollup.config.js"]
+}

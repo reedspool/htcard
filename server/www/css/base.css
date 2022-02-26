@@ -1,0 +1,22 @@
+@layer base {
+    h1 {
+        @apply text-2xl;
+    }
+
+    h2 {
+        @apply text-xl;
+    }
+
+    h3 {
+        @apply text-lg;
+    }
+
+    p:not(:last-child) {
+        @apply mb-sm;
+    }
+
+    a {
+        @apply text-blue-700 border-b border-blue-700
+            hover:text-blue-600 hover:border-blue-600;
+    }
+}

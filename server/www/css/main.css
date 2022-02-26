@@ -1,0 +1,12 @@
+/* Use CSS imports instead of tailwind declarations */
+/* See https://tailwindcss.com/docs/using-with-preprocessors#build-time-imports */
+
+@import "tailwindcss/base";
+@import "./base.css";
+
+@import "tailwindcss/components";
+@import "./component/live.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

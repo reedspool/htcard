@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "es2019",
+        "noImplicitAny": false,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "outDir": "./server/dist",
+        "sourceMap": true,
+        "allowSyntheticDefaultImports" : true,
+        "allowJs": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "declaration": true,
+        "declarationMap": true,
+        "strict": true,
+        "lib": ["es2019", "esnext.asynciterable", "dom"],
+        "types": ["node"],
+        "baseUrl":".",
+        "paths": {
+            "*" : ["*", "server/src/*"]
+        }
+    },
+    "include": ["./server/src/**/*.ts"],
+    "exclude": ["node_modules", "**/*.test.ts", "./server/www"]
+}

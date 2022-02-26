@@ -1,0 +1,39 @@
+@layer components {
+    .cpnt-live {
+        @apply inline-flex flex-row justify-start gap-2 items-center
+        border border-slate-900 rounded-md
+        px-2 pt-[3px] w-min
+        bg-slate-200/80
+        align-text-top;
+    }
+
+    .cpnt-live__orb {
+        @apply w-0 h-0 border-red-500 border-4 rounded-xl inline-block mb-[2px]
+            ;
+
+        box-shadow: 0 0 5px #ef4444;
+        animation: glowing 2300ms infinite;
+    }
+
+    .cpnt-live__text {
+        @apply inline-block uppercase text-xs
+            tracking-widest;
+    }
+
+    @keyframes glowing {
+        0% {
+            @apply border-red-500;
+            box-shadow: 0 0 5px #ef4444;
+        }
+        50% {
+            @apply border-red-700 ;
+            box-shadow: 0 0 20px #ef4444;
+
+
+        }
+        100% {
+            @apply border-red-500 ;
+            box-shadow: 0 0 5px #ef4444;
+        }
+    }
+}

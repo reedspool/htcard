@@ -1,0 +1,50 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>HTCard</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <link rel="stylesheet" href="/static/bundle.css" type="text/css" media="screen" />
+        <script type="module" src="/static/bundle.js"></script>
+    </head>
+    <body class="w-full bg-slate-300 box-border m-0 p-0"
+        _="
+           init
+                log '_hyperscript loaded'
+--              wait 2s
+--              window.location.reload()
+
+                -- TODO: What's a useful abstraction for these two copy-paste-edit blocks?
+                fetch '/views/hour_minute_date.ejs' then precompile the result into $tmplHourMinuteDate
+
+                set times to <time[datetime][data-format=hour_minute_date] />
+                repeat for time in times
+                    make a Date from time's @datetime called date
+                    render $tmplHourMinuteDate with (date: date)
+                    put the result into time's outerHTML
+                end
+
+                fetch '/views/hour_minute.ejs' then precompile the result into $tmplHourMinute
+
+                set times to <time[datetime][data-format=hour_minute] />
+                repeat for time in times
+                    make a Date from time's @datetime called date
+                    render $tmplHourMinute with (date: date)
+                    put the result into time's outerHTML
+                end
+
+
+                 ">
+        <div class="p-md max-w-full">
+            <div class="flex flex-col justify-start items-center w-full">
+                <div class="w-full xl:w-1/2">
+                    <%- body %>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
