@@ -1,1 +1,37 @@
 <h1 class="mb-sm">Welcome!</h1>
+
+<% cards.forEach(({ slug, title }) => { %>
+    <a href="/card/<%= slug %>"><%= title || slug %></a>
+<% }) %>
+
+<button
+    class="border-2 rounded-md py-1 px-2 border-slate-500"
+    _="
+           on click
+                call prompt('New Card Slug:')
+                log the result
+                fetch `card` { method: 'PUT', headers: { 'Content-Type' : 'application/x-javascript' }, body: JSON.stringify({ slug: result }) }
+                log the result
+           "
+>Create card</button>
+
+<script type="text/hyperscript">
+      def POST(fn, body)
+        fetch `/.netlify/functions/${fn}` as json { method: 'POST', body: JSON.stringify(body) }
+        return the result
+      end
+
+      def GET(fn, args)
+        set url to `/.netlify/functions/${fn}`
+        if args
+            js(args)
+              return Object.entries(args)
+                  .map(([key, value]) => encodeURIComponent(key) + '=' + encodeURIComponent(value))
+                  .join('&');
+            end
+            append `?${result}` to url
+        end
+        fetch `${url}` as json { method: 'GET' }
+        return the result
+      end
+</script>

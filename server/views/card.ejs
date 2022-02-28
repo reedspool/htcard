@@ -1,0 +1,97 @@
+<div class="cpnt-highlight bg-red-300/10 fixed top-[99999px]"
+     _="on mousemove halt" ></div>
+<div class="cpnt-card"
+_="
+  init
+    set :lastHovered to <body />
+    set :highlight to first <.cpnt-highlight />
+
+  on mousemove queue none
+    log event.target
+    set :lastHovered to target of event
+    measure element :lastHovered top,left,bottom,right
+            log the result's top
+            log top
+            log :highlight
+    set :highlight's *top to top
+            log the result's bottom
+            set @bottom of :highlight to bottom
+    set *bottom of :highlight to bottom
+    set *right of :highlight to right
+    set *left of :highlight to left
+"
+>
+    <h1><%= slug %></h1>
+    <div class="cpnt-card__toolbar-wrapper relative z-0 mb-sm"
+_="
+  init
+      set $editContentTextarea to <.cpnt-card__toolbar-content>textarea /> in me
+      set $editContentToolbar to <.cpnt-card__toolbar-content /> in me
+      set $contentContainer to <.cpnt-card__content /> in me
+      set $toolbar to <.cpnt-card__toolbar /> in the closest <.cpnt-card__toolbar-wrapper />
+  on mouseenter
+      remove .hidden from $toolbar
+  on mouseleave
+      add .hidden to $toolbar
+"
+    >
+        <div class="cpnt-card__toolbar hidden
+                    absolute bg-slate-400 rounded-xl
+                    -z-10 -top-[2.8rem] -bottom-4 -left-4 -right-4 px-4 py-2
+                    "
+        >
+            <div class="flex flex-row justify-start gap-2">
+                <button class="bg-slate-300 rounded-md px-2 py-px"
+_="
+  on click
+      set $originalContent to the innerHTML of the $contentContainer
+      set content to the innerHTML of the $contentContainer
+      put the content.toString().trim() into the value of the $editContentTextarea
+      remove .hidden from $editContentToolbar
+"
+                >Edit Content</button>
+                <button class="bg-slate-300 rounded-md px-2 py-px">Edit Classes</button>
+                <button class="bg-slate-300 rounded-md px-2 py-px">Edit Attributes</button>
+            </div>
+        </div>
+        <div class="cpnt-card__content block z-20 bg-white"
+            >
+            <% if (typeof content !== "undefined") { %>
+                <%- content.trim() %>
+            <% } else { %>
+                <p>No content</p>
+            <% } %>
+        </div>
+        <div class="cpnt-card__toolbar-content hidden
+                    bg-slate-400 rounded-xl
+                    mt-2
+                    ">
+            <textarea class="p-2 w-full h-[5rem]" name="" id="" rows="" cols="" tabindex=""
+_="
+  on keyup put my value into $contentContainer's innerHTML
+"
+            ></textarea>
+            <div class="flex flex-row justify-start gap-2">
+                <button class="bg-slate-300 rounded-md px-2 py-px"
+_="on click
+  set body to JSON.stringify({ slug: '<%= slug %>', content: first of value of $editContentTextarea })
+  fetch `/card/<%= slug %>`
+    { method: 'POST', headers: { 'Content-Type' : 'application/x-javascript' }, body: body  }
+"
+                >Save</button>
+                <button class="bg-slate-300 rounded-md px-2 py-px">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <button
+        class="bg-slate-400 rounded-md px-2 py-1 block"
+_="
+on click
+  call confirm('Are you sure you want to delete this card?')
+  log the result
+  if the result is false then halt end
+  fetch `/card/<%= slug %>` { method: 'DELETE'}
+"
+    >Delete Card</button>
+</div>
