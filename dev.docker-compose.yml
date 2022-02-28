@@ -1,6 +1,8 @@
 version: "3.9"
 services:
   web:
+    depends_on:
+      - mongo
     build:
       context: .
       dockerfile: dev.Dockerfile
@@ -8,16 +10,27 @@ services:
       - '3000:80'
     volumes:
       - ./server:/web/server
-      - /web/node_modules
     # On linux, run `id -u` and `id -g`
     # to find these numbers
     # Consider an override as per
     # https://blog.giovannidemizio.eu/2021/05/24/how-to-set-user-and-group-in-docker-compose/
     user: 1000:1000
+    environment:
+      # From https://stackoverflow.com/a/43163074
+      - MONGO_URL=mongodb://mongo:27017/app_development
+    links:
+      - mongo
   mongo:
     # container_name: mongo
     image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=htcard-mongo
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=adminadmin
     volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - ./docker_volumes/mongo:/data/db
     ports:
-      - '27018:27017'
+      - '27017:27017'
+      - '27018:27018'
+      - '27019:27019'

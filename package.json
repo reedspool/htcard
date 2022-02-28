@@ -16,16 +16,21 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/koa-bodyparser": "^4.3.5",
+    "@types/koa-mongo": "^1.9.2",
     "ejs": "^3.1.6",
     "htmx.org": "^1.6.1",
     "hyperscript.org": "^0.9.4",
     "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
     "koa-logger": "^3.2.1",
+    "koa-mongo": "^1.9.3",
     "koa-mount": "^4.0.0",
     "koa-router": "^10.1.1",
     "koa-sse-stream": "^0.2.0",
     "koa-static": "^5.0.0",
     "koa-views": "^8.0.0",
+    "mongoose": "^6.2.3",
     "ts-node": "^10.5.0"
   },
   "devDependencies": {

@@ -5,7 +5,8 @@ import logger from 'koa-logger';
 import KoaViews from 'koa-views';
 import KoaStatic from 'koa-static';
 import KoaMount from 'koa-mount';
-import KoaSSE from 'koa-sse-stream';
+import KoaBodyParser from 'koa-bodyparser';
+import KoaMongo from 'koa-mongo';
 
 // From https://stackoverflow.com/a/64383997
 import { fileURLToPath } from 'url';
@@ -49,6 +50,15 @@ app.context.renderPage = async function(template: string, data: Record<string, a
 }
 
 app.use(logger())
+app.use(KoaBodyParser({
+    extendTypes: {
+        // Content-Type request header should match this to be parsed
+        json: ['application/x-javascript']
+    }
+}))
+app.use(KoaMongo({
+    uri: 'mongodb://user1:useruser@mongo:27017/htcard-mongo', //or url
+}))
 app.use(KoaMount('/static/', KoaStatic(__dirname + '/../www/build')))
 app.use(KoaMount('/views/', KoaStatic(__dirname + '/../views')))
 
