@@ -1,0 +1,142 @@
+<script type="text/hyperscript">
+ -- Make this HTML element editable with this window
+ behavior Editable
+    -- Setup for this particular element
+    on click[altKey]
+        send start(source: me) to $editWindow
+    end
+
+    init
+      -- One-time component setup
+      -- Don't do any of the following setup if already done
+      -- This allows us to safely include this template multiple times
+      if $editWindow exists then halt end
+
+      set $editWindow to the first of <.cpnt-edit-window />
+    end
+ end
+</script>
+<div class="cpnt-edit-window hidden"
+_="
+  init
+      set $editContentTextarea to <textarea /> in me
+      set $editContentToolbar to <.cpnt-edit-window__toolbar-content /> in me
+      set $editUnsavedWarning to <.cpnt-edit-window__unsaved-warning /> in me
+      set $editTitlebar to <.cpnt-edit-window__titlebar /> in me
+
+  on start(source)
+      remove .hidden from me
+      set $editTitlebar's *top to '50%'
+      set $editTitlebar's *left to '50%'
+      set $editContentSource to source
+      send editContent to me
+
+  on editContent
+      set content to the innerHTML of the $editContentSource
+      put the content.toString().trim() into the value of the $editContentTextarea
+--      call $editContentTextarea.focus()
+      remove .hidden from $editContentToolbar
+
+  on close
+    add .hidden to $editWindow
+"
+>
+    <div class="cpnt-edit-window__titlebar w-full flex flex-row justify-start gap-2 items-center border-b border-slate-900 p-2"
+_="
+on pointerdown(clientX, clientY)
+  halt the event
+          measure element $editWindow x, y, left, top, height, width
+          set originalLeft to (left + (width / 2))
+          set originalTop to (top + (height / 2))
+          set xoff to (clientX - x) 
+          set yoff to (clientY - y) 
+
+ --             set $editWindow's *left to `${originalLeft}px`
+ --             set $editWindow's *top to `${originalTop}px`
+
+          transition element $editWindow
+              margin-top to '-5px'
+              box-shadow to '8px 8px 2px 1px rgba(0, 0, 0, .2)'
+            over 50ms
+          repeat until event pointerup from document
+            wait for pointermove(pageX, pageY) or
+                     pointerup(pageX, pageY) from document
+                set $editWindow's *left to `${(pageX - xoff)}px`
+                set $editWindow's *top to `${(pageY - yoff)}px`
+          end
+          transition element $editWindow
+              margin-top to 0
+              *box-shadow to '0 0 0 0'
+            over 50ms
+"
+            >
+        <h3 class="text-slate-300">Editor</h3>
+        <div class="grow"></div>
+        <button class="justify-self-end block bg-slate-300 rounded-md px-2"
+                _="on click send close to $editWindow"
+        >X</button>
+    </div>
+    <div class="cpnt-edit-window__pane">
+        <div class="cpnt-edit-window__tabs"
+_="
+  on click
+    if not (event.target matches <button />) then halt end
+    repeat for button in (<button /> in me)
+      button.classList.remove('!bg-slate-100')
+    end
+
+    event.target.classList.add('!bg-slate-100')
+"
+        >
+            <button
+                class="!bg-slate-100"
+_="
+   on click
+        send editContent to $editWindow
+"
+            >Edit Content</button>
+            <button class="">Edit Classes</button>
+            <button class="">Edit Attributes</button>
+        </div>
+        <div class="cpnt-edit-window__toolbar-content
+                    rounded-xl
+                    mt-2
+                    ">
+            <textarea class="p-2 w-full h-[5rem]" name="" id="" rows="" cols="" tabindex=""
+_="
+  on keyup
+    put my value into $editContentSource's innerHTML
+    remove .hidden from $editUnsavedWarning
+"
+            ></textarea>
+            <div class="flex flex-row justify-start gap-2">
+                <button class="bg-slate-300 rounded-md px-2 py-px"
+_="
+  on click
+    set body to JSON.stringify({ slug: '<%= slug %>', content: first of value of $editContentTextarea })
+    fetch `/card/<%= slug %>`
+      { method: 'POST', headers: { 'Content-Type' : 'application/x-javascript' }, body: body  }
+    add .hidden to $editUnsavedWarning
+"
+                >Save</button>
+                <span class="cpnt-edit-window__unsaved-warning hidden text-red-600 ">Unsaved</span>
+                <button class="bg-slate-300 rounded-md px-2 py-px"
+_="
+  on click
+    send close to $editWindow
+"
+                >Cancel & Close</button>
+            </div>
+        </div>
+
+        <button
+            class="bg-slate-400 rounded-md px-2 py-1 block"
+_="
+on click
+  call confirm('Are you sure you want to delete this card?')
+  if the result is false then halt end
+  fetch `/card/<%= slug %>` { method: 'DELETE'}
+"
+        >Delete Card</button>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+@layer components {
+    .cpnt-edit-window {
+        @apply fixed
+        z-50
+        w-3/4
+        h-3/4
+        /* for testing */
+        /* top-[-99999px] */
+        top-0 left-0
+
+        bg-gray-500
+        ;
+    }
+
+    .cpnt-edit-window__tabs {
+        @apply flex flex-row justify-start gap-2;
+    }
+
+    .cpnt-edit-window__tabs > button {
+        @apply bg-slate-300 rounded-md px-2 py-px;
+    }
+
+    .cpnt-edit-window__pane {
+        @apply p-4;
+    }
+}

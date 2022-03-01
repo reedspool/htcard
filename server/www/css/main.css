@@ -6,6 +6,7 @@
 
 @import "tailwindcss/components";
 @import "./component/live.css";
+@import "./component/edit_window.css";
 
 @tailwind base;
 @tailwind components;
