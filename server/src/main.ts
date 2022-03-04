@@ -19,7 +19,8 @@ const app = new Koa({});
 // Setup render function to return the result instead of
 // writing to ctx.response.body. This allows rendering
 // a template, and sending the result to another template
-let render;
+export type KoaViewsRenderEJS = (file: string, args: Record<string, any>) => Promise<string>;
+let render: KoaViewsRenderEJS;
 {
     const views = KoaViews(__dirname + '/../views', {
         extension: 'ejs',
@@ -65,9 +66,10 @@ app.use(KoaMount('/views/', KoaStatic(__dirname + '/../views')))
 //
 {
     const cardRoutes = new Router<DefaultState, Context>();
-    app.use(MongoCard.middleware())
+    app.use(MongoCard.middleware(render))
     cardRoutes.get('/', async ctx => ctx.renderPage('index', { cards: await ctx.Card.getAll() }))
     cardRoutes.get('/cards', async ctx => ctx.body = await ctx.Card.getAll());
+    cardRoutes.get('/card/:slug/edit', async ctx => ctx.renderPage('edit_card', await ctx.Card.getBySlug(ctx.params.slug)));
     cardRoutes.get('/card/:slug', async ctx => ctx.renderPage('card', await ctx.Card.getBySlug(ctx.params.slug)));
     cardRoutes.put('/card', async ctx => {
         await ctx.Card.create(ctx.request.body)
