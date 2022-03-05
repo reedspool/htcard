@@ -1,6 +1,7 @@
 import Koa, { ParameterizedContext } from 'koa';
 import { Collection } from 'mongodb';
 import { JSDOM } from 'jsdom';
+import ejs from 'ejs';
 
 export interface Card {
     slug: string;
@@ -15,11 +16,57 @@ export class MongoCard {
     }
 
     getAll() { return this.collection.find().toArray() };
+
     // TODO use graph lookup to search for all cards referenced via childCardSlugs
-    getBySlug(slug: Card["slug"]) { return this.collection.findOne({ slug }) };
+    /**
+     * Construct card's content by fetching all its children
+     */
+    async getBySlug(slug: Card["slug"]) {
+        const allDescendantCards = await this.collection.aggregate([
+            { $match: { slug } },
+            {
+                $graphLookup: {
+                    from: 'card',
+                    startWith: '$childCardSlugs',
+                    connectFromField: 'childCardSlugs',
+                    connectToField: 'slug',
+                    as: 'childCards',
+                    maxDepth: 100,
+                    depthField: '__depth',
+                }
+            }
+        ]).toArray();
+
+        const rootCard = allDescendantCards[0];
+
+        // Sort the descendant cards in reverse depth order, because in this order
+        // we can render each in a loop
+        const reverseDepthDescendantCards = rootCard.childCards.sort((a, b) => b.__depth - a.__depth)
+
+        // Transpose child card array into a map from slug to content
+        const childCardContentBySlug = {};
+
+        reverseDepthDescendantCards.forEach(({ slug, content }) => {
+            // Render this content. Because we're going in reverse depth order,
+            // we can be sure that any child card has already been rendered into the map
+            // Content might not be set, in which case no render is necessary
+            if (content) content = ejs.render(content, { cards: childCardContentBySlug });
+
+            // Wrap the content with the card wrapper
+            childCardContentBySlug[slug] = `<div data-card="${slug}">${content || ''}</div>`;
+        })
+
+        // Finally, render the root card
+        if (rootCard.content) rootCard.content = ejs.render(rootCard.content, { cards: childCardContentBySlug });
+
+        return rootCard;
+    };
 
     create(card: Card) { return this.collection.insertOne(card) };
 
+    /**
+     * Update a card, replacing its children with templates and separate references to their slugs
+     */
     update(slug: Card["slug"], card: Card) {
         const dom = new JSDOM(card.content);
 
