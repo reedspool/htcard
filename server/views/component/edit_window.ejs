@@ -3,6 +3,7 @@
  behavior Editable
     -- Setup for this particular element
     on click[altKey]
+        halt the event
         send start(source: me) to $editWindow
     end
 

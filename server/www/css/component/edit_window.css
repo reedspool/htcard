@@ -3,10 +3,12 @@
         @apply fixed
         z-50
         w-3/4
-        h-3/4
+        h-1/4
+        md:w-2/4
+        lg:w-1/4
         /* for testing */
         /* top-[-99999px] */
-        top-0 left-0
+        bottom-1 right-1
 
         bg-gray-500
         ;
