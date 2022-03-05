@@ -66,7 +66,7 @@ app.use(KoaMount('/views/', KoaStatic(__dirname + '/../views')))
 //
 {
     const cardRoutes = new Router<DefaultState, Context>();
-    app.use(MongoCard.middleware(render))
+    app.use(MongoCard.middleware())
     cardRoutes.get('/', async ctx => ctx.renderPage('index', { cards: await ctx.Card.getAll() }))
     cardRoutes.get('/cards', async ctx => ctx.body = await ctx.Card.getAll());
     cardRoutes.get('/card/:slug/edit', async ctx => ctx.renderPage('edit_card', await ctx.Card.getBySlug(ctx.params.slug)));

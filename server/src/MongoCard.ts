@@ -1,7 +1,6 @@
 import Koa, { ParameterizedContext } from 'koa';
 import { Collection } from 'mongodb';
 import { JSDOM } from 'jsdom';
-import { KoaViewsRenderEJS } from './main';
 
 export interface Card {
     slug: string;
@@ -10,12 +9,9 @@ export interface Card {
 
 export class MongoCard {
     collection: Collection<Card>;
-    render: KoaViewsRenderEJS
 
-    constructor(collection: Collection<Card>, render: KoaViewsRenderEJS) {
+    constructor(collection: Collection<Card>) {
         this.collection = collection;
-        // TODO Now use render in getBySlug
-        this.render = render;
     }
 
     getAll() { return this.collection.find().toArray() };
@@ -54,9 +50,9 @@ export class MongoCard {
 
     delete(slug: Card["slug"]) { return this.collection.deleteOne({ slug }); }
 
-    static middleware(render: KoaViewsRenderEJS) {
+    static middleware() {
         return (ctx: ParameterizedContext<Koa.DefaultState, Koa.DefaultContext, unknown>, next: Koa.Next) => {
-            ctx.Card = new MongoCard(ctx.db.collection<Card>('card'), render);
+            ctx.Card = new MongoCard(ctx.db.collection<Card>('card'));
             return next();
         }
     }
