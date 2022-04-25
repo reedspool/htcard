@@ -104,5 +104,31 @@ const hyperscriptEJSExtension = _hyperscript => {
     });
 }
 
+/**
+ * Add command `process` which processes the given node
+ */
+const hyperscriptProcessNodeExtension = _hyperscript => {
+    _hyperscript.addCommand("process", function (parser, runtime, tokens) {
+        if (!tokens.matchToken("process")) return;
+
+        var node_ = parser.requireElement("expression", tokens);
+
+        return {
+            args: [node_],
+            op: function (ctx, node) {
+                if (node instanceof Element) {
+                    _hyperscript.processNode(node);
+                } else {
+                    throw new Error(node_.sourceFor() + " is not an element");
+                }
+
+                return runtime.findNext(this, ctx);
+            },
+        };
+    });
+
+}
+
 // Apply this extension
 hyperscriptEJSExtension(hyperscript);
+hyperscriptProcessNodeExtension(hyperscript);
