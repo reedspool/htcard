@@ -107,7 +107,12 @@ _="
 _="
   on keyup
     put my value into $editContentSource's innerHTML
+    process $editContentSource
     remove .hidden from $editUnsavedWarning
+  on exception(error)
+    -- Must catch the errors from malformed hyperscript when process called,
+    -- but we don't have to do anything about it
+    send noop to me
 "
             ></textarea>
             <div class="flex flex-row justify-start gap-2">
