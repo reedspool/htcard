@@ -35,7 +35,7 @@ const EJS_OPTIONS = {}
  * @param {HyperscriptObject} _hyperscript
  */
 const hyperscriptEJSExtension = _hyperscript => {
-    _hyperscript.addCommand("render", function(parser, runtime, tokens) {
+    _hyperscript.addCommand("render", function (parser, runtime, tokens) {
         if (!tokens.matchToken("render")) return;
         var template_ = parser.requireElement("expression", tokens);
 
@@ -50,7 +50,7 @@ const hyperscriptEJSExtension = _hyperscript => {
 
         return {
             args: [template_, templateArgs, target_],
-            op: function(ctx, template, templateArgs, target) {
+            op: function (ctx, template, templateArgs, target) {
                 if (typeof template === "string") {
                     ctx.result = ejs.compile(template, EJS_OPTIONS)(templateArgs);
                 } else if (template.__ejs_precompiled && typeof template === "function") {
@@ -72,7 +72,7 @@ const hyperscriptEJSExtension = _hyperscript => {
             },
         };
     });
-    _hyperscript.addCommand("precompile", function(parser, runtime, tokens) {
+    _hyperscript.addCommand("precompile", function (parser, runtime, tokens) {
         if (!tokens.matchToken("precompile")) return;
 
         var template_ = parser.requireElement("expression", tokens);
@@ -83,7 +83,7 @@ const hyperscriptEJSExtension = _hyperscript => {
 
         return {
             args: [template_],
-            op: function(ctx, template) {
+            op: function (ctx, template) {
                 if (typeof template === "string") {
                     ctx.result = ejs.compile(template, EJS_OPTIONS);
                     ctx.result.__ejs_precompiled = true;
