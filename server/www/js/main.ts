@@ -5,6 +5,12 @@ import applyHyperscriptEventsource from "../../../node_modules/hyperscript.org/d
 
 applyHyperscriptEventsource(hyperscript);
 
+declare global {
+    interface Window {
+        hyperscript: typeof hyperscript;
+    }
+}
+window.hyperscript = hyperscript;
 const EJS_OPTIONS = {}
 
 /**
